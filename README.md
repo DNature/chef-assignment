@@ -1,20 +1,19 @@
 # chef-assignment
 
-## Build Setup
+## Screenshots
 
-```bash
-# install dependencies
-$ yarn install
+### Home Page
 
-# serve with hot reload at localhost:3000
-$ yarn dev
+![Home page](./static/images/readme/home-page.png)
 
-# build for production and launch server
-$ yarn build
-$ yarn start
+### Recipes Page
 
-# generate static project
-$ yarn generate
-```
+![Recipes Page](./static/images/readme/Recipes.png)
 
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+### Signin Page
+
+![Sign in](./static/images/readme/signin.png)
+
+### Single Recipe view
+
+![Single Recipe](./static/images/readme/recipe.png)
