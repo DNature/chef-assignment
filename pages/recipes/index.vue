@@ -30,16 +30,18 @@
       gap="6"
       mt="12"
     >
-      <c-box
+      <c-link
         v-for="recipe in getOneCategory.recipes"
         :key="recipe.id"
+        as="nuxt-link"
+        :to="`recipes/${recipe.id}`"
         class="card"
         p="4"
         border-radius="10px"
       >
         <h3>{{ recipe.name }}</h3>
         <p>{{ recipe.description.slice(0, 150) }}</p>
-      </c-box>
+      </c-link>
     </c-grid>
     <c-grid
       v-if="!category.length"
