@@ -11,7 +11,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-const AUTHKEY = 'autorization'
 
 export default Vue.extend({
   data() {
@@ -28,9 +27,8 @@ export default Vue.extend({
   },
   methods: {
     async logout() {
-      localStorage.removeItem(AUTHKEY)
       // @ts-ignore
-      await this.$apolloHelpers.getToken()
+      await this.$apolloHelpers.onLogout()
       this.$router.push('/login')
       this.isLoggedIn = false
     },

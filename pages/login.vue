@@ -12,6 +12,7 @@
             <c-input v-model="email" placeholder="Email" type="email" />
             <c-input
               v-model="password"
+              autocomplete="on"
               placeholder="Password"
               type="password"
             />
@@ -23,6 +24,7 @@
             <c-input v-model="email" placeholder="Email" type="email" />
             <c-input
               v-model="password"
+              autocomplete="on"
               placeholder="Password"
               type="password"
             />
@@ -37,7 +39,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import Mutations from '@/apollo/mutations'
-const AUTHKEY = 'autorization'
 
 export default Vue.extend({
   data() {
@@ -50,7 +51,8 @@ export default Vue.extend({
     }
   },
   mounted() {
-    if (localStorage.getItem(AUTHKEY)) {
+    // @ts-ignore
+    if (this.$apolloHelpers.getToken()) {
       this.isLoggedIn = true
     }
   },
@@ -74,7 +76,6 @@ export default Vue.extend({
         },
       })
       if (token) {
-        // localStorage.setItem(AUTHKEY, `Bearer ${token}`)
         // @ts-ignore
         await this.$apolloHelpers.onLogin(token)
         this.isLoggedIn = true
@@ -107,7 +108,6 @@ export default Vue.extend({
           },
         })
         if (token) {
-          // localStorage.setItem(AUTHKEY, `Bearer ${token}`)
           // @ts-ignore
           await this.$apolloHelpers.onLogin(token)
           this.isLoggedIn = true
@@ -115,7 +115,6 @@ export default Vue.extend({
       }
     },
     async logout() {
-      localStorage.removeItem(AUTHKEY)
       // @ts-ignore
       await this.$apolloHelpers.onLogout()
       this.$router.push('/login')

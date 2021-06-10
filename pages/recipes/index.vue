@@ -16,41 +16,23 @@
           type="text"
           font-size="1rem"
           placeholder="Search"
+          @change="searchRecipe"
         />
       </c-input-group>
-      <c-select v-model="category" placeholder="Select Burger">
+      <c-select
+        v-model="category"
+        placeholder="Select Burger"
+        @change="oneCategory"
+      >
         <option v-for="c in getCategories" :key="c.id" :value="c.name">
           {{ c.name }}
         </option>
       </c-select>
     </c-simple-grid>
-    <c-grid
-      v-if="category.length"
-      template-columns="repeat(4, 1fr)"
-      gap="6"
-      mt="12"
-    >
+    <c-spinner v-if="recipes.loading" />
+    <c-grid v-else template-columns="repeat(4, 1fr)" gap="6" mt="12">
       <c-link
-        v-for="recipe in getOneCategory.recipes"
-        :key="recipe.id"
-        as="nuxt-link"
-        :to="`recipes/${recipe.id}`"
-        class="card"
-        p="4"
-        border-radius="10px"
-      >
-        <h3>{{ recipe.name }}</h3>
-        <p>{{ recipe.description.slice(0, 150) }}</p>
-      </c-link>
-    </c-grid>
-    <c-grid
-      v-if="!category.length"
-      template-columns="repeat(4, 1fr)"
-      gap="6"
-      mt="12"
-    >
-      <c-link
-        v-for="recipe in searchRecipe"
+        v-for="recipe in recipes"
         :key="recipe.id"
         as="nuxt-link"
         :to="`recipes/${recipe.id}`"
@@ -75,39 +57,40 @@ export default Vue.extend({
   data() {
     return {
       query: '',
+      loading: this.$store.state.recipe.loading,
       getRecipes: [],
-      getOneCategory: {},
       getCategories: [],
       category: '',
     }
   },
   apollo: {
-    getCategories: Queries.GetCategories,
     getRecipes: Queries.GetRecipes,
-    getOneCategory() {
-      return {
-        query: Queries.GetOneCategory,
-        variables: {
-          name: 'Desserts',
-        },
-      }
-    },
   },
   computed: {
+    recipes() {
+      const data = this.$store.state.recipe.recipes
+      return data
+    },
+    // eslint-disable-next-line vue/return-in-computed-property
     searchRecipe() {
       const input = this.query
       if (input.length >= 2) {
-        // @ts-ignore
-        const newRecipe = this.getRecipes.filter(
-          (i: any) =>
-            i.name.toLowerCase().includes(input.toLowerCase()) ||
-            i.description.toLowerCase().includes(input.toLowerCase())
-        )
-
-        return newRecipe
+        this.$store.dispatch('recipe/searchRecipe', input)
+      } else {
+        this.$store.dispatch('recipe/getRecipes')
       }
-      // @ts-ignore
-      return this.getRecipes
+    },
+  },
+  created() {
+    this.$store.dispatch('recipe/getRecipes')
+  },
+  methods: {
+    oneCategory() {
+      if (this.category.length > 2) {
+        this.$store.dispatch('recipe/oneCategory', this.category)
+      } else {
+        this.$store.dispatch('recipe/getRecipes')
+      }
     },
   },
 })
