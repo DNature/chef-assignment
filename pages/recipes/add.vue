@@ -28,7 +28,7 @@ import Vue from 'vue'
 
 export default Vue.extend({
   layout: 'main',
-  middleware: 'admin',
+  middleware: ['auth', 'admin'],
   data() {
     return {
       name: '',

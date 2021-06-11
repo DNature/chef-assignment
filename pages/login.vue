@@ -1,5 +1,5 @@
 <template>
-  <c-box :w="['90vw', '70vw', '40vw']" mx="auto">
+  <c-box :w="['90vw', '60vw', '30vw']" mx="auto">
     <c-tabs>
       <c-tab-list>
         <c-tab>Register</c-tab>
@@ -65,6 +65,7 @@ export default Vue.extend({
         })
         .then(() => {
           this.$store.dispatch('recipe/setUser')
+          this.$store.dispatch('recipe/loggedIn')
           this.$router.push('/')
         })
     },
