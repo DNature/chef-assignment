@@ -13,24 +13,18 @@
 import Vue from 'vue'
 
 export default Vue.extend({
-  data() {
-    return {
-      isLoggedIn: false,
-    }
-  },
-  async mounted() {
-    // @ts-ignore
-    const token = await this.$apolloHelpers.getToken()
-    if (token) {
-      this.isLoggedIn = true
-    }
+  computed: {
+    isLoggedIn() {
+      this.$store.dispatch('recipe/loggedIn')
+      return this.$store.state.recipe.isLoggedIn
+    },
   },
   methods: {
     async logout() {
       // @ts-ignore
       await this.$apolloHelpers.onLogout()
+      this.$store.dispatch('recipe/loggedIn')
       this.$router.push('/login')
-      this.isLoggedIn = false
     },
   },
 })

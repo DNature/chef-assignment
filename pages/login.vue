@@ -41,20 +41,21 @@ import Vue from 'vue'
 import Mutations from '@/apollo/mutations'
 
 export default Vue.extend({
+  middleware: 'login',
   data() {
     return {
       isOpen: false,
       email: '',
       password: '',
       name: '',
-      isLoggedIn: false,
+      // isLoggedIn: this.$store.state.recipe.isLoggedIn,
     }
   },
-  mounted() {
-    // @ts-ignore
-    if (this.$apolloHelpers.getToken()) {
-      this.isLoggedIn = true
-    }
+  computed: {
+    isLoggedIn() {
+      this.$store.dispatch('recipe/loggedIn')
+      return this.$store.state.recipe.isLoggedIn
+    },
   },
   methods: {
     open() {
@@ -78,7 +79,9 @@ export default Vue.extend({
       if (token) {
         // @ts-ignore
         await this.$apolloHelpers.onLogin(token)
-        this.isLoggedIn = true
+
+        this.$store.dispatch('recipe/loggedIn')
+
         this.$router.push('/')
       }
     },
@@ -110,7 +113,7 @@ export default Vue.extend({
         if (token) {
           // @ts-ignore
           await this.$apolloHelpers.onLogin(token)
-          this.isLoggedIn = true
+          this.$store.dispatch('recipe/loggedIn')
         }
       }
     },
@@ -118,7 +121,7 @@ export default Vue.extend({
       // @ts-ignore
       await this.$apolloHelpers.onLogout()
       this.$router.push('/login')
-      this.isLoggedIn = false
+      this.$store.dispatch('recipe/loggedIn')
     },
   },
 })

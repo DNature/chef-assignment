@@ -1,14 +1,16 @@
 import Queries from '@/apollo/queries'
 
-const types = {
+export const types = {
   ONE_CATEGORY: 'ONE_CATEGORY',
   GET_RECIPES: 'GET_RECIPES',
   SEARCH_RECIPES: 'SEARCH_RECIPES',
+  IS_LOGGED_IN: 'IS_LOGGED_IN',
 }
 
 export const state = {
   recipes: [],
   loading: false,
+  isLoggedIn: false,
 }
 export const mutations = {
   [types.ONE_CATEGORY](state, payload) {
@@ -21,6 +23,9 @@ export const mutations = {
   },
   [types.SEARCH_RECIPES](state, payload) {
     state.recipes = payload
+  },
+  [types.IS_LOGGED_IN](state, token) {
+    state.isLoggedIn = !!token
   },
 }
 
@@ -49,5 +54,9 @@ export const actions = {
         i.description.toLowerCase().includes(input.toLowerCase())
     )
     commit(types.SEARCH_RECIPES, recipes)
+  },
+  loggedIn({ commit }) {
+    const token = this.app.$apolloHelpers.getToken()
+    commit(types.IS_LOGGED_IN, token)
   },
 }
