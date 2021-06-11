@@ -1,55 +1,56 @@
 <template>
-  <div>
-    <c-simple-grid
-      :columns="3"
-      mt="8"
-      :spacing="4"
-      max-w="40rem"
-      align-items="center"
-    >
-      <c-input-group size="lg" grid-column-start="1" grid-column-end="3">
-        <c-input-left-element opacity="0.4"
-          ><fa icon="search"
-        /></c-input-left-element>
-        <c-input
-          v-model="query"
-          type="text"
-          font-size="1rem"
-          placeholder="Search"
-          @change="searchRecipe"
-        />
-      </c-input-group>
-      <c-select
-        v-model="category"
-        placeholder="Select Burger"
-        @change="oneCategory"
+  <no-ssr>
+    <div>
+      <c-simple-grid
+        :columns="3"
+        mt="8"
+        :spacing="4"
+        max-w="40rem"
+        align-items="center"
       >
-        <option v-for="c in getCategories" :key="c.id" :value="c.name">
-          {{ c.name }}
-        </option>
-      </c-select>
-    </c-simple-grid>
-    <c-spinner v-if="recipes.loading" />
-    <c-grid v-else template-columns="repeat(4, 1fr)" gap="6" mt="12">
-      <c-link
-        v-for="recipe in recipes"
-        :key="recipe.id"
-        as="nuxt-link"
-        :to="`recipes/${recipe.id}`"
-        class="card"
-        p="4"
-        border-radius="10px"
-      >
-        <h3>{{ recipe.name }}</h3>
-        <p>{{ recipe.description.slice(0, 150) }}</p>
-      </c-link>
-    </c-grid>
-  </div>
+        <c-input-group size="lg" grid-column-start="1" grid-column-end="3">
+          <c-input-left-element opacity="0.4"
+            ><fa icon="search"
+          /></c-input-left-element>
+          <c-input
+            v-model="query"
+            type="text"
+            font-size="1rem"
+            placeholder="Search"
+            @change="searchRecipe"
+          />
+        </c-input-group>
+        <c-select
+          v-model="category"
+          placeholder="Select Burger"
+          @change="oneCategory"
+        >
+          <option v-for="c in categories" :key="c.id" :value="c.name">
+            {{ c.name }}
+          </option>
+        </c-select>
+      </c-simple-grid>
+      <c-spinner v-if="recipes.loading" />
+      <c-grid v-else template-columns="repeat(4, 1fr)" gap="6" mt="12">
+        <c-link
+          v-for="recipe in recipes"
+          :key="recipe.id"
+          as="nuxt-link"
+          :to="`recipes/${recipe.id}`"
+          class="card"
+          p="4"
+          border-radius="10px"
+        >
+          <h3>{{ recipe.name }}</h3>
+          <p>{{ recipe.description.slice(0, 150) }}</p>
+        </c-link>
+      </c-grid>
+    </div>
+  </no-ssr>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import Queries from '~/apollo/queries'
 
 export default Vue.extend({
   layout: 'main',
@@ -58,18 +59,13 @@ export default Vue.extend({
     return {
       query: '',
       loading: this.$store.state.recipe.loading,
-      getRecipes: [],
-      getCategories: [],
       category: '',
+      categories: this.$store.state.recipe.categories,
     }
-  },
-  apollo: {
-    getRecipes: Queries.GetRecipes,
   },
   computed: {
     recipes() {
-      const data = this.$store.state.recipe.recipes
-      return data
+      return this.$store.state.recipe.recipes
     },
     // eslint-disable-next-line vue/return-in-computed-property
     searchRecipe() {
@@ -82,6 +78,7 @@ export default Vue.extend({
     },
   },
   created() {
+    this.$store.dispatch('recipe/getCategories')
     this.$store.dispatch('recipe/getRecipes')
   },
   methods: {

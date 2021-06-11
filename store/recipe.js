@@ -5,13 +5,15 @@ export const types = {
   GET_RECIPES: 'GET_RECIPES',
   SEARCH_RECIPES: 'SEARCH_RECIPES',
   IS_LOGGED_IN: 'IS_LOGGED_IN',
+  GET_CATEGORIES: 'GET_CATEGORIES',
 }
 
-export const state = {
+export const state = () => ({
   recipes: [],
+  categories: [],
   loading: false,
   isLoggedIn: false,
-}
+})
 export const mutations = {
   [types.ONE_CATEGORY](state, payload) {
     state.loading = payload.loading
@@ -26,6 +28,10 @@ export const mutations = {
   },
   [types.IS_LOGGED_IN](state, token) {
     state.isLoggedIn = !!token
+  },
+  [types.GET_CATEGORIES](state, payload) {
+    state.loading = payload.loading
+    state.categories = payload.data
   },
 }
 
@@ -58,5 +64,15 @@ export const actions = {
   loggedIn({ commit }) {
     const token = this.app.$apolloHelpers.getToken()
     commit(types.IS_LOGGED_IN, token)
+  },
+  async getCategories({ commit }) {
+    const client = this.app.apolloProvider.defaultClient
+    const categories = await client.query({
+      query: Queries.GetCategories,
+    })
+    commit(types.GET_CATEGORIES, {
+      data: categories.data.getCategories,
+      loading: categories.loading,
+    })
   },
 }
