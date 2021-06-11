@@ -1,19 +1,23 @@
+import { Context } from '@nuxt/types'
 import Queries from '~/apollo/queries'
 
-export default async function ({ app, redirect, route }: any) {
+export default async function ({ app, redirect }: Context) {
   const hasToken = !!app.$apolloHelpers.getToken()
   if (!hasToken) {
+    return redirect('/login')
+  }
+  if (!app.apolloProvider) {
     return redirect('/login')
   }
   // make sure the token is still valid
   try {
     const {
-      data: { getCategories },
+      data: { me },
     } = await app.apolloProvider.defaultClient.query({
-      query: Queries.GetCategories,
+      query: Queries.MeQuery,
     })
-    if (!Object.keys(getCategories).length) {
-      return redirect(route.fullPath || '/login')
+    if (!Object.keys(me).length) {
+      return redirect('/login')
     }
     // we are good to go and validated
   } catch (e) {

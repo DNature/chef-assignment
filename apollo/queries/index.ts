@@ -1,4 +1,5 @@
 import { gql } from 'graphql-tag'
+import { RecipeFragment } from '../shared'
 
 const GetCategories = gql`
   query GetCategories {
@@ -12,25 +13,6 @@ const GetCategories = gql`
         ingredients
       }
     }
-  }
-`
-
-const RecipeFragment = gql`
-  fragment RecipeResponse on Recipe {
-    id
-    name
-    description
-    ingredients
-    user {
-      name
-      email
-    }
-    category {
-      name
-      id
-    }
-    createdAt
-    updatedAt
   }
 `
 
@@ -65,9 +47,20 @@ const GetOneRecipe = gql`
   ${RecipeFragment}
 `
 
+const MeQuery = gql`
+  query me {
+    me {
+      id
+      name
+      email
+    }
+  }
+`
+
 export default {
   GetCategories,
   GetRecipes,
   GetOneCategory,
   GetOneRecipe,
+  MeQuery,
 }

@@ -82,4 +82,7 @@ export default {
       },
     },
   },
+  env: {
+    SUPERUSER: 'superuser',
+  },
 }

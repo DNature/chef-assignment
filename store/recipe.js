@@ -8,20 +8,28 @@ export const types = {
   IS_LOGGED_IN: 'IS_LOGGED_IN',
   GET_CATEGORIES: 'GET_CATEGORIES',
   LOGIN: 'LOGIN',
+  SET_USER: 'SET_USER',
+  ADD_RECIPE: 'ADD_RECIPE',
 }
 
 export const state = () => ({
   recipes: [],
   categories: [],
   loading: false,
-  isLoggedIn: false,
-  username: null,
+  user: null,
+  isAdmin: false,
   errors: {
     path: null,
     message: null,
   },
 })
 export const mutations = {
+  [types.SET_USER](state, payload) {
+    state.user = payload
+    if (payload.name && payload.name === process.env.SUPERUSER) {
+      state.isAdmin = true
+    }
+  },
   [types.GET_RECIPES](state, payload) {
     state.loading = payload.loading
     state.recipes = payload.data.getRecipes
@@ -59,7 +67,6 @@ export const mutations = {
     }
   },
   [types.LOGIN](state, payload) {
-    state.username = payload.username
     state.loading = payload.loading
     if (payload.errors) {
       state.errors = {
@@ -68,9 +75,28 @@ export const mutations = {
       }
     }
   },
+  [types.ADD_RECIPE](state, payload) {
+    state.recipes.push(payload)
+  },
+  // [types.DELETE_RECIPE](state, data) {
+  //   state.recipes.splice()
+  // },
 }
 
 export const actions = {
+  async setUser({ commit }, payload) {
+    const client = this.app.apolloProvider.defaultClient
+    if (payload) {
+      commit(types.SET_USER, payload)
+    } else {
+      const {
+        data: { me },
+      } = await client.query({
+        query: Queries.MeQuery,
+      })
+      commit(types.SET_USER, me)
+    }
+  },
   async getRecipes({ commit }) {
     const client = this.app.apolloProvider.defaultClient
     const recipes = await client.query({
@@ -126,6 +152,36 @@ export const actions = {
     commit(types.GET_CATEGORIES, {
       data: categories.data.getCategories,
       loading: categories.loading,
+    })
+  },
+  async create({ commit }, input) {
+    const client = this.app.apolloProvider.defaultClient
+    const { data } = await client.mutate({
+      mutation: Mutations.CreateRecipe,
+      variables: input,
+    })
+
+    commit(types.ADD_RECIPE, data.createRecipe)
+  },
+  async deleteRecipe(_, id) {
+    const client = this.app.apolloProvider.defaultClient
+
+    await client.mutate({
+      mutation: Mutations.DeleteRecipe,
+      variables: {
+        id,
+      },
+      async update(store, { data: { deleteRecipe } }) {
+        if (deleteRecipe) {
+          const { getRecipes: data } = store.readQuery({
+            query: Queries.GetRecipes,
+          })
+          const idx = data.findIndex((i) => parseInt(i.id) === id)
+          data.splice(idx, 1)
+          await store.writeQuery({ query: Queries.GetRecipes, data })
+          // commit(types.DELETE_RECIPE, idx)
+        }
+      },
     })
   },
 }

@@ -63,7 +63,10 @@ export default Vue.extend({
           email: this.email,
           password: this.password,
         })
-        .then(() => this.$router.push('/'))
+        .then(() => {
+          this.$store.dispatch('recipe/setUser')
+          this.$router.push('/')
+        })
     },
 
     async register() {
@@ -93,7 +96,9 @@ export default Vue.extend({
         if (token) {
           // @ts-ignore
           await this.$apolloHelpers.onLogin(token)
-          this.$store.dispatch('recipe/loggedIn')
+          this.$store
+            .dispatch('recipe/loggedIn')
+            .then(() => this.$router.push('/'))
         }
       }
     },
@@ -102,6 +107,7 @@ export default Vue.extend({
       await this.$apolloHelpers.onLogout()
       this.$router.push('/login')
       this.$store.dispatch('recipe/loggedIn')
+      this.$store.dispatch('recipe/setUser', {})
     },
   },
 })

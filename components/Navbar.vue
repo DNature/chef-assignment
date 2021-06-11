@@ -13,7 +13,7 @@
         <c-stack is-inline :spacing="6" align-items="center" d="flex">
           <c-link as="nuxt-link" to="/"> Home </c-link>
           <c-link as="nuxt-link" to="/recipes"> Recipes </c-link>
-          <c-link v-if="isSuperUser" as="nuxt-link" to="/recipes/add"
+          <c-link v-if="isAdmin" as="nuxt-link" to="/recipes/add"
             >Add Recipe
           </c-link>
         </c-stack>
@@ -34,8 +34,9 @@ export default Vue.extend({
     Login,
   },
   computed: {
-    isSuperUser() {
-      return this.$store.state.recipe.username === 'superuser'
+    isAdmin() {
+      this.$store.dispatch('recipe/setUser')
+      return this.$store.state.recipe.isAdmin
     },
   },
 })

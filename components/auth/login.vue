@@ -24,6 +24,7 @@ export default Vue.extend({
       // @ts-ignore
       await this.$apolloHelpers.onLogout()
       this.$store.dispatch('recipe/loggedIn')
+      this.$store.dispatch('recipe/setUser', {})
       this.$router.push('/login')
     },
   },

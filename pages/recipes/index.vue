@@ -22,7 +22,7 @@
         </c-input-group>
         <c-select
           v-model="category"
-          placeholder="Select Burger"
+          placeholder="Select catetory"
           @change="oneCategory"
         >
           <option v-for="c in categories" :key="c.id" :value="c.name">

@@ -10,6 +10,15 @@
         }}</c-checkbox>
       </c-checkbox-group>
     </c-box>
+
+    <c-button
+      v-if="isAdmin"
+      mt="6"
+      variant-color="red"
+      variant="outline"
+      @click="deleteRecipe"
+      >Delete recipe</c-button
+    >
   </c-box>
 </template>
 
@@ -45,8 +54,22 @@ export default Vue.extend({
         return []
       }
     },
+    isAdmin() {
+      return this.$store.state.recipe.isAdmin
+    },
   },
-  watch: {},
+  methods: {
+    deleteRecipe() {
+      const id = Number(this.$route.params.id)
+      try {
+        this.$store.dispatch('recipe/deleteRecipe', id).then(() => {
+          this.$router.push('/recipes')
+        })
+      } catch (err) {
+        console.error(err)
+      }
+    },
+  },
 })
 </script>
 
