@@ -60,12 +60,14 @@ export default Vue.extend({
       query: '',
       loading: this.$store.state.recipe.loading,
       category: '',
-      categories: this.$store.state.recipe.categories,
     }
   },
   computed: {
     recipes() {
       return this.$store.state.recipe.recipes
+    },
+    categories() {
+      return this.$store.state.recipe.categories
     },
     // eslint-disable-next-line vue/return-in-computed-property
     searchRecipe() {

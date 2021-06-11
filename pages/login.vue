@@ -48,7 +48,6 @@ export default Vue.extend({
       email: '',
       password: '',
       name: '',
-      // isLoggedIn: this.$store.state.recipe.isLoggedIn,
     }
   },
   computed: {
@@ -58,32 +57,13 @@ export default Vue.extend({
     },
   },
   methods: {
-    open() {
-      this.isOpen = true
-    },
-    close() {
-      this.isOpen = false
-    },
-    async login() {
-      const {
-        data: {
-          login: { token },
-        },
-      } = await this.$apollo.mutate({
-        mutation: Mutations.Login,
-        variables: {
+    login() {
+      this.$store
+        .dispatch('recipe/login', {
           email: this.email,
           password: this.password,
-        },
-      })
-      if (token) {
-        // @ts-ignore
-        await this.$apolloHelpers.onLogin(token)
-
-        this.$store.dispatch('recipe/loggedIn')
-
-        this.$router.push('/')
-      }
+        })
+        .then(() => this.$router.push('/'))
     },
 
     async register() {

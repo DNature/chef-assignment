@@ -36,12 +36,11 @@
   </c-box>
 </template>
 
-<script lang="js">
+<script lang="ts">
 import Vue from 'vue'
 
 export default Vue.extend({
   name: 'App',
-  inject: ['$chakraColorMode', '$toggleColorMode'],
   data() {
     return {
       isOpen: false,
@@ -57,29 +56,6 @@ export default Vue.extend({
         },
       },
     }
-  },
-
-  computed: {
-    colorMode() {
-      return this.$chakraColorMode()
-    },
-    theme() {
-      return this.$chakraTheme()
-    },
-    toggleColorMode() {
-      return this.$toggleColorMode
-    },
-  },
-  methods: {
-    showToast() {
-      this.$toast({
-        title: 'Account created.',
-        description: "We've created your account for you.",
-        status: 'success',
-        duration: 10000,
-        isClosable: true,
-      })
-    },
   },
 })
 </script>
